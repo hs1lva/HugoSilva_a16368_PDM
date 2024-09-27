@@ -1,2 +1,3 @@
 # HugoSilva_a16368_PDM
- Aulas PDM 2024/25
+Diretório GitHub que irá servir para apoio e demonstração de conteúdos realizados em PDM ano letivo 2024/25.
+Hugo Silva nº16368
