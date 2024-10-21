@@ -42,7 +42,6 @@ fun CalcButton0(
 fun CalcButton0Preview() {
     CalculatorTheme {
         CalcButton(label = "0") {
-            // aqui vai a funcao callback
         }
     }
 }

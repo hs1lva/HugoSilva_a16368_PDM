@@ -9,7 +9,6 @@ class CalculatorBrain {
         MULTIPLY,
         DIVIDE,
         PERCENT,
-        SQRT,
         NEGATE
     }
 
@@ -34,7 +33,6 @@ class CalculatorBrain {
             Operation.MULTIPLY -> operand * secondOperand
             Operation.DIVIDE -> if (secondOperand != 0.0) operand / secondOperand else Double.NaN
             Operation.PERCENT -> operand / 100
-            Operation.SQRT -> if (operand >= 0) Math.sqrt(operand) else Double.NaN
             Operation.NEGATE -> -operand
             else -> secondOperand // No caso de nenhuma operação definida, retorna o segundo operando
         }.also {

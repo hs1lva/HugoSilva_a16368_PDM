@@ -75,7 +75,8 @@ fun CalculatorView(modifier: Modifier = Modifier) {
 
             CalcButton(label = "+/-", isOperation = true, onButtonPressed = {
                 calculatorBrain.setOperand(display.toDoubleOrNull() ?: 0.0)
-                display = calculatorBrain.doOperation(0.0).toString()
+                onOperationPressed(CalculatorBrain.Operation.NEGATE)
+                display = calculatorBrain.doOperation(0.0).toString() // Aplica a negação no display
             }, modifier = Modifier.weight(1f))
 
             CalcButton(label = "%", isOperation = true, onButtonPressed = {
