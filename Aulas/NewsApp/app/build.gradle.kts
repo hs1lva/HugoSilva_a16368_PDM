@@ -83,9 +83,12 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
 
     implementation("io.coil-kt.coil3:coil-compose:3.0.0-rc01")
-    // Dependência para Coil (carregamento de imagens)
-    implementation("io.coil-kt:coil-compose:2.1.0")
 
     // Dependência para OkHttp (networking)
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
+
+    // Dependência para Coil (carregamento de imagens)
+    implementation("io.coil-kt:coil-compose:2.1.0")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.0-rc01")
+
 }
