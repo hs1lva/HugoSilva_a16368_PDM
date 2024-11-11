@@ -10,7 +10,7 @@ import com.example.myshoppinglist_a16368.auth.LoginViewModel
 import com.example.myshoppinglist_a16368.home.HomeScreen
 import com.example.myshoppinglist_a16368.shopping.ShoppingListScreen
 import com.example.myshoppinglist_a16368.ui.theme.MyShoppingListTheme
-import com.example.myshoppinglist_a16368.ui.work.WorkScreen
+import com.example.myshoppinglist_a16368.shopping.WorkScreen
 import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : ComponentActivity() {
@@ -20,15 +20,15 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MyShoppingListTheme {
-                // Estado para verificar se o usuário está logado
+                // Estado para verificar se o utilizador está logado
                 var isUserLoggedIn by remember { mutableStateOf(auth.currentUser != null) }
                 val loginViewModel: LoginViewModel = viewModel()
 
-                // Se o usuário estiver logado, exibe o ecrã de seleção
+                // Se o utilizador estiver logado, mostra o ecrã de seleção
                 if (isUserLoggedIn) {
                     MainScreen(onLogout = { isUserLoggedIn = false }) // Adicionando opção de logout
                 } else {
-                    // Se não estiver logado, exibe o ecrã de login
+                    // Se não estiver logado, mostra o ecrã de login
                     LoginScreen(
                         onLoginSuccess = { isUserLoggedIn = true },
                         loginViewModel = loginViewModel
@@ -43,13 +43,17 @@ class MainActivity : ComponentActivity() {
 fun MainScreen(onLogout: () -> Unit) {
     var selectedOption by remember { mutableStateOf("") }
 
-    // Exibe o ecrã de seleção dependendo da opção selecionada
     when (selectedOption) {
         "" -> HomeScreen(
             onSelect = { option -> selectedOption = option },
-            onLogout = onLogout // Passando a função de logout
+            onLogout = onLogout
         )
-        "Casa" -> ShoppingListScreen(viewModel = viewModel()) // Aqui, chamamos ShoppingListScreen
-        "Trabalho" -> WorkScreen() // Aqui, tela para 'Trabalho'
+        "Casa" -> ShoppingListScreen(
+            viewModel = viewModel(),
+            onBackToHome = { selectedOption = "" } // Passar a função de voltar para Home
+        )
+        "Trabalho" -> WorkScreen(
+            onBackToHome = { selectedOption = "" } // Passar a função de voltar para Home
+        )
     }
 }

@@ -30,7 +30,7 @@ class ShoppingListViewModel : ViewModel() {
         }
     }
 
-    // Alternar o estado de compra de um item
+    // Alternar o estado de compra do item
     fun toggleItemBought(itemId: String, isBought: Boolean) {
         viewModelScope.launch {
             try {
@@ -54,7 +54,7 @@ class ShoppingListViewModel : ViewModel() {
         }
     }
 
-    // Buscar todos os itens na lista de compras
+    // Procurar todos os itens na lista de compras
     fun fetchShoppingList() {
         viewModelScope.launch {
             try {

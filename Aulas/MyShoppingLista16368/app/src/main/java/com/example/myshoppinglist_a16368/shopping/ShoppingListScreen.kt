@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ShoppingListScreen(viewModel: ShoppingListViewModel) {
+fun ShoppingListScreen(viewModel: ShoppingListViewModel, onBackToHome: () -> Unit) {
     var newItem by remember { mutableStateOf("") }
     val shoppingList by viewModel.shoppingList.collectAsState()
 
@@ -49,9 +49,16 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel) {
                 )
             }
         }
+
+        // Botão para voltar ao ecrã inicial
+        Button(
+            onClick = onBackToHome,
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text("Retroceder")
+        }
     }
 
-    // Atualiza a lista de produtos ao iniciar o ecrã
     LaunchedEffect(Unit) {
         viewModel.fetchShoppingList()
     }
