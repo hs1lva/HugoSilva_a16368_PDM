@@ -14,7 +14,30 @@ class ShoppingListViewModel : ViewModel() {
     val shoppingList: StateFlow<List<ShoppingItem>> = _shoppingList
 
     init {
-        fetchShoppingList() // Carrega a lista ao iniciar o ViewModel
+        listenToShoppingList() // Ouvir as mudanças na lista de compras
+    }
+
+    // Mudanças em tempo real na coleção "shoppingList"
+    private fun listenToShoppingList() {
+        db.collection("shoppingList")
+            .addSnapshotListener { snapshot, exception ->
+                if (exception != null) {
+                    // Se houve erro...
+                    exception.printStackTrace()
+                    return@addSnapshotListener
+                }
+
+                // Se a resposta for bem-sucedida, atualiza a lista
+                snapshot?.let { querySnapshot ->
+                    _shoppingList.value = querySnapshot.documents.map { doc ->
+                        ShoppingItem(
+                            id = doc.id,
+                            item = doc.getString("item") ?: "",
+                            isBought = doc.getBoolean("isBought") ?: false
+                        )
+                    }
+                }
+            }
     }
 
     // Adicionar item
@@ -23,19 +46,17 @@ class ShoppingListViewModel : ViewModel() {
             try {
                 val shoppingItem = hashMapOf("item" to item, "isBought" to false)
                 db.collection("shoppingList").add(shoppingItem).await()
-                fetchShoppingList() // Atualiza a lista após adicionar o item
             } catch (e: Exception) {
                 e.printStackTrace() // Imprime o erro no log
             }
         }
     }
 
-    // Alternar o estado de compra do item
+    // Alterar o estado de compra do item
     fun toggleItemBought(itemId: String, isBought: Boolean) {
         viewModelScope.launch {
             try {
                 db.collection("shoppingList").document(itemId).update("isBought", isBought).await()
-                fetchShoppingList() // Atualiza a lista após a mudança de estado
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -47,25 +68,6 @@ class ShoppingListViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 db.collection("shoppingList").document(itemId).delete().await()
-                fetchShoppingList() // Atualiza a lista após a remoção
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
-    // Procurar todos os itens na lista de compras
-    fun fetchShoppingList() {
-        viewModelScope.launch {
-            try {
-                val querySnapshot = db.collection("shoppingList").get().await()
-                _shoppingList.value = querySnapshot.documents.map { doc ->
-                    ShoppingItem(
-                        id = doc.id,
-                        item = doc.getString("item") ?: "",
-                        isBought = doc.getBoolean("isBought") ?: false
-                    )
-                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }

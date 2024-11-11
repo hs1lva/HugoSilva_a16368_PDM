@@ -19,6 +19,7 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel, onBackToHome: () -> Uni
             .padding(16.dp),
         verticalArrangement = Arrangement.Top
     ) {
+        // Campo para adicionar novo produto
         TextField(
             value = newItem,
             onValueChange = { newItem = it },
@@ -28,10 +29,11 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel, onBackToHome: () -> Uni
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Botão para adicionar novo produto
         Button(
             onClick = {
                 viewModel.addItem(newItem)
-                newItem = "" // Limpar o campo de entrada
+                newItem = "" // Limpar o campo de entrada após adicionar
             },
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -40,6 +42,7 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel, onBackToHome: () -> Uni
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Exibição da lista de compras com LazyColumn
         LazyColumn {
             items(shoppingList) { item ->
                 ShoppingListItem(
@@ -57,10 +60,6 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel, onBackToHome: () -> Uni
         ) {
             Text("Retroceder")
         }
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.fetchShoppingList()
     }
 }
 
@@ -82,14 +81,16 @@ fun ShoppingListItem(
             modifier = Modifier.weight(1f)
         )
 
+        // Checkbox para alternar o estado de "comprado"
         Checkbox(
             checked = item.isBought,
             onCheckedChange = { onToggleBought(!item.isBought) } // Inverte o estado
         )
 
+        // Botão de remover item
         TextButton(
             onClick = onRemove,
-            enabled = true // Para certificar que o botao está ativo
+            enabled = true // Para garantir que o botão está ativo
         ) {
             Text("Remover")
         }
