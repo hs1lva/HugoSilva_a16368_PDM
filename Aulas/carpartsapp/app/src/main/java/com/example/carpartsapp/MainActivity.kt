@@ -69,6 +69,12 @@ class MainActivity : ComponentActivity() {
                                 onAddCar = { model, year ->
                                     carViewModel.addCar(model, year)
                                 },
+                                onLogout = {
+                                    FirebaseAuth.getInstance().signOut() // Termina a sessão
+                                    navController.navigate("login") {
+                                        popUpTo("car_list") { inclusive = true }
+                                    }
+                                },
                                 navController = navController
                             )
                         }
