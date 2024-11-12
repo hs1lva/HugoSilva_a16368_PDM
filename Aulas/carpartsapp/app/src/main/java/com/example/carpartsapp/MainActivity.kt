@@ -20,6 +20,7 @@ import com.example.carpartsapp.viewmodels.CarPartViewModel
 import com.example.carpartsapp.viewmodels.CarPartViewModelFactory
 import com.example.carpartsapp.viewmodels.CarViewModel
 import com.example.carpartsapp.viewmodels.CarViewModelFactory
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : ComponentActivity() {
@@ -28,6 +29,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             CarPartsAppTheme {
                 val navController = rememberNavController()
@@ -35,18 +37,19 @@ class MainActivity : ComponentActivity() {
                 val carPartViewModel: CarPartViewModel = viewModel(factory = CarPartViewModelFactory(carPartRepository))
 
                 Surface(color = MaterialTheme.colors.background) {
-                    NavHost(navController = navController, startDestination = "login") {
+                    // Verifica se há um utilizador autenticado
+                    val currentUser = FirebaseAuth.getInstance().currentUser
 
+                    NavHost(
+                        navController = navController,
+                        startDestination = if (currentUser == null) "login" else "car_list"
+                    ) {
                         composable("login") {
                             LoginView(
                                 navController = navController,
                                 onLoginSuccess = { isAdmin ->
-                                    if (isAdmin) {
-                                        navController.navigate("car_list") {
-                                            popUpTo("login") { inclusive = true }
-                                        }
-                                    } else {
-                                        // Exibir mensagem ou navegar para outra tela para usuários não-admins
+                                    navController.navigate("car_list") {
+                                        popUpTo("login") { inclusive = true }
                                     }
                                 }
                             )
@@ -61,7 +64,7 @@ class MainActivity : ComponentActivity() {
                                 cars = carViewModel.cars,
                                 onCarSelected = { car ->
                                     navController.navigate("car_parts/${car.id}")
-                                    carPartViewModel.loadParts(car.id)
+                                    carPartViewModel.listenToParts(car.id)
                                 },
                                 onAddCar = { model, year ->
                                     carViewModel.addCar(model, year)
@@ -91,4 +94,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-

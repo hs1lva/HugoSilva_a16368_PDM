@@ -65,6 +65,7 @@ dependencies {
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.androidx.foundation.android)
+    implementation ("com.google.firebase:firebase-firestore-ktx:24.0.0") // Exemplo de versão recente
 
     // Testing
     testImplementation ("junit:junit:4.13.2")

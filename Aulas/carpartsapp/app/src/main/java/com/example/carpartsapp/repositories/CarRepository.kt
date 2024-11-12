@@ -1,15 +1,28 @@
 package com.example.carpartsapp.repositories
 
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.example.carpartsapp.models.Car
 import kotlinx.coroutines.tasks.await
 
 class CarRepository(private val db: FirebaseFirestore) {
 
-    suspend fun getAllCars(): List<Car> {
-        return db.collection("cars").get().await().documents.mapNotNull { document ->
-            document.toObject(Car::class.java)?.apply { id = document.id }
-        }
+    fun listenToCars(onCarsChanged: (List<Car>) -> Unit): ListenerRegistration {
+        return db.collection("cars")
+            .addSnapshotListener { snapshots, error ->
+                if (error != null) {
+                    Log.e("CarRepository", "Erro ao carregar carros", error)
+                    return@addSnapshotListener
+                }
+
+                val carsList = snapshots?.documents?.mapNotNull { document ->
+                    document.toObject(Car::class.java)?.apply { id = document.id }
+                } ?: emptyList()
+
+                Log.d("CarRepository", "Carros carregados: ${carsList.size}")
+                onCarsChanged(carsList)
+            }
     }
 
     suspend fun addCar(car: Car) {
@@ -20,3 +33,4 @@ class CarRepository(private val db: FirebaseFirestore) {
         db.collection("cars").document(carId).delete().await()
     }
 }
+
