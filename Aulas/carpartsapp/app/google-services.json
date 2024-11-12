@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "637481216757",
+    "project_id": "carpartsapp-77f7d",
+    "storage_bucket": "carpartsapp-77f7d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:637481216757:android:20dd331d7d6a9c71ad73bc",
+        "android_client_info": {
+          "package_name": "com.example.carpartsapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAIFGf3pEo8uJvOdkPkxQlyfz5_9h8ZZWs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
