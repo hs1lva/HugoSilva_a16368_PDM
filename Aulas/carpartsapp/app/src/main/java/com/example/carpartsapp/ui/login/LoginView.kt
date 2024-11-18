@@ -1,4 +1,4 @@
-package com.example.carpartsapp.ui
+package com.example.carpartsapp.ui.login
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -14,7 +14,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 
 @Composable
-fun RegisterView(navController: NavController) {
+fun LoginView(navController: NavController, onLoginSuccess: (isAdmin: Boolean) -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
@@ -43,6 +43,7 @@ fun RegisterView(navController: NavController) {
             visualTransformation = PasswordVisualTransformation()
         )
         Spacer(modifier = Modifier.height(16.dp))
+
         if (isLoading) {
             CircularProgressIndicator()
         } else {
@@ -50,23 +51,29 @@ fun RegisterView(navController: NavController) {
                 onClick = {
                     isLoading = true
                     coroutineScope.launch {
-                        userManager.registerUser(email, password, onSuccess = {
+                        userManager.loginUser(email, password, onSuccess = { isAdmin ->
                             isLoading = false
-                            navController.navigate("login") {
-                                popUpTo("register") { inclusive = true } // Limpar a pilha de navegação ao registrar
-                            }
+                            onLoginSuccess(isAdmin)
                         }, onFailure = { exception ->
                             isLoading = false
-                            errorMessage = exception?.message ?: "Registration failed"
+                            errorMessage = exception?.message ?: "Login failed"
                         })
                     }
                 }
             ) {
-                Text("Register")
+                Text("Login")
             }
         }
+
         if (errorMessage.isNotEmpty()) {
             Text(errorMessage, color = MaterialTheme.colors.error)
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        TextButton(onClick = { navController.navigate("register") }) {
+            Text("Don't have an account? Register")
+        }
     }
 }
+

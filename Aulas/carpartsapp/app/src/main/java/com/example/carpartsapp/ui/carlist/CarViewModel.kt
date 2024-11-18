@@ -1,4 +1,4 @@
-package com.example.carpartsapp.viewmodels
+package com.example.carpartsapp.ui.carlist
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf

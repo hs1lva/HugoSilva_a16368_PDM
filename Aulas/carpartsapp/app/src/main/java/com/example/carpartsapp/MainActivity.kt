@@ -11,15 +11,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.carpartsapp.repositories.CarRepository
 import com.example.carpartsapp.repositories.CarPartRepository
-import com.example.carpartsapp.ui.CarListView
-import com.example.carpartsapp.ui.CarPartListView
-import com.example.carpartsapp.ui.LoginView
-import com.example.carpartsapp.ui.RegisterView
+import com.example.carpartsapp.ui.carlist.CarListView
+import com.example.carpartsapp.ui.carparts.CarPartListView
+import com.example.carpartsapp.ui.login.LoginView
+import com.example.carpartsapp.ui.register.RegisterView
 import com.example.carpartsapp.ui.theme.CarPartsAppTheme
-import com.example.carpartsapp.viewmodels.CarPartViewModel
-import com.example.carpartsapp.viewmodels.CarPartViewModelFactory
-import com.example.carpartsapp.viewmodels.CarViewModel
-import com.example.carpartsapp.viewmodels.CarViewModelFactory
+import com.example.carpartsapp.ui.carparts.CarPartViewModel
+import com.example.carpartsapp.ui.carparts.CarPartViewModelFactory
+import com.example.carpartsapp.ui.carlist.CarViewModel
+import com.example.carpartsapp.ui.carlist.CarViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 

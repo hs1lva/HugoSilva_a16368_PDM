@@ -1,4 +1,4 @@
-package com.example.carpartsapp.ui
+package com.example.carpartsapp.ui.register
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -14,7 +14,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginView(navController: NavController, onLoginSuccess: (isAdmin: Boolean) -> Unit) {
+fun RegisterView(navController: NavController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
@@ -43,7 +43,6 @@ fun LoginView(navController: NavController, onLoginSuccess: (isAdmin: Boolean) -
             visualTransformation = PasswordVisualTransformation()
         )
         Spacer(modifier = Modifier.height(16.dp))
-
         if (isLoading) {
             CircularProgressIndicator()
         } else {
@@ -51,29 +50,23 @@ fun LoginView(navController: NavController, onLoginSuccess: (isAdmin: Boolean) -
                 onClick = {
                     isLoading = true
                     coroutineScope.launch {
-                        userManager.loginUser(email, password, onSuccess = { isAdmin ->
+                        userManager.registerUser(email, password, onSuccess = {
                             isLoading = false
-                            onLoginSuccess(isAdmin)
+                            navController.navigate("login") {
+                                popUpTo("register") { inclusive = true } // Limpar a pilha de navegação ao registrar
+                            }
                         }, onFailure = { exception ->
                             isLoading = false
-                            errorMessage = exception?.message ?: "Login failed"
+                            errorMessage = exception?.message ?: "Registration failed"
                         })
                     }
                 }
             ) {
-                Text("Login")
+                Text("Register")
             }
         }
-
         if (errorMessage.isNotEmpty()) {
             Text(errorMessage, color = MaterialTheme.colors.error)
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        TextButton(onClick = { navController.navigate("register") }) {
-            Text("Don't have an account? Register")
-        }
     }
 }
-

@@ -1,4 +1,4 @@
-package com.example.carpartsapp.ui
+package com.example.carpartsapp.ui.carlist
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*

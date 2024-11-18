@@ -1,4 +1,4 @@
-package com.example.carpartsapp.ui
+package com.example.carpartsapp.ui.carparts
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
