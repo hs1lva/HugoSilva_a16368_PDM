@@ -5,7 +5,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -16,6 +19,7 @@ fun CarListView(
     cars: List<Car>,
     onCarSelected: (Car) -> Unit,
     onAddCar: (String, Int) -> Unit,
+    onShareCar: (String, String) -> Unit,
     onLogout: () -> Unit,
     navController: NavController
 ) {
@@ -23,9 +27,9 @@ fun CarListView(
     var year by remember { mutableStateOf("") }
     var isInputValid by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf("") }
+    var showShareDialog by remember { mutableStateOf<String?>(null) }
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-
         // Lista de carros existente
         LazyColumn(modifier = Modifier.weight(1f)) {
             items(cars) { car ->
@@ -33,11 +37,21 @@ fun CarListView(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 4.dp)
-                        .clickable { onCarSelected(car) }
                 ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(text = car.model, style = MaterialTheme.typography.h6)
-                        Text(text = "Year: ${car.year}", style = MaterialTheme.typography.body1)
+                    Row(
+                        modifier = Modifier
+                            .clickable { onCarSelected(car) }
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(text = car.model, style = MaterialTheme.typography.h6)
+                            Text(text = "Year: ${car.year}", style = MaterialTheme.typography.body1)
+                        }
+                        IconButton(onClick = { showShareDialog = car.id }) {
+                            Icon(Icons.Default.Share, contentDescription = "Share Car")
+                        }
                     }
                 }
             }
@@ -74,7 +88,11 @@ fun CarListView(
         }
 
         if (errorMessage.isNotEmpty()) {
-            Text(text = errorMessage, color = MaterialTheme.colors.error, style = MaterialTheme.typography.body2)
+            Text(
+                text = errorMessage,
+                color = MaterialTheme.colors.error,
+                style = MaterialTheme.typography.body2
+            )
             Spacer(modifier = Modifier.height(8.dp))
         }
 
@@ -100,12 +118,62 @@ fun CarListView(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Botão de logout
         Button(
             onClick = { onLogout() },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Logout")
+        }
+
+        // Share Dialog
+        showShareDialog?.let { carId ->
+            var email by remember { mutableStateOf("") }
+            var shareError by remember { mutableStateOf("") }
+
+            AlertDialog(
+                onDismissRequest = { showShareDialog = null },
+                title = { Text("Share Car") },
+                text = {
+                    Column {
+                        if (shareError.isNotEmpty()) {
+                            Text(
+                                text = shareError,
+                                color = MaterialTheme.colors.error,
+                                style = MaterialTheme.typography.body2
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+                        TextField(
+                            value = email,
+                            onValueChange = {
+                                email = it
+                                shareError = ""
+                            },
+                            label = { Text("User Email") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            if (email.isNotBlank() && email.contains("@")) {
+                                onShareCar(carId, email)
+                                showShareDialog = null
+                            } else {
+                                shareError = "Please enter a valid email"
+                            }
+                        }
+                    ) {
+                        Text("Share")
+                    }
+                },
+                dismissButton = {
+                    Button(onClick = { showShareDialog = null }) {
+                        Text("Cancel")
+                    }
+                }
+            )
         }
     }
 }

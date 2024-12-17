@@ -9,6 +9,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.room.Room
+import com.example.carpartsapp.data.local.AppDatabase
 import com.example.carpartsapp.repositories.CarRepository
 import com.example.carpartsapp.repositories.CarPartRepository
 import com.example.carpartsapp.ui.carlist.CarListView
@@ -24,8 +26,21 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : ComponentActivity() {
-    private val carRepository = CarRepository(FirebaseFirestore.getInstance())
-    private val carPartRepository = CarPartRepository(FirebaseFirestore.getInstance())
+    private val database by lazy {
+        Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java,
+            "carparts_db"
+        ).build()
+    }
+
+    private val carRepository by lazy {
+        CarRepository(FirebaseFirestore.getInstance(), database)
+    }
+
+    private val carPartRepository by lazy {
+        CarPartRepository(FirebaseFirestore.getInstance())
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,11 +48,14 @@ class MainActivity : ComponentActivity() {
         setContent {
             CarPartsAppTheme {
                 val navController = rememberNavController()
-                val carViewModel: CarViewModel = viewModel(factory = CarViewModelFactory(carRepository))
-                val carPartViewModel: CarPartViewModel = viewModel(factory = CarPartViewModelFactory(carPartRepository))
+                val carViewModel: CarViewModel = viewModel(
+                    factory = CarViewModelFactory(carRepository)
+                )
+                val carPartViewModel: CarPartViewModel = viewModel(
+                    factory = CarPartViewModelFactory(carPartRepository)
+                )
 
                 Surface(color = MaterialTheme.colors.background) {
-                    // Verifica se há um utilizador autenticado
                     val currentUser = FirebaseAuth.getInstance().currentUser
 
                     NavHost(
@@ -69,8 +87,11 @@ class MainActivity : ComponentActivity() {
                                 onAddCar = { model, year ->
                                     carViewModel.addCar(model, year)
                                 },
+                                onShareCar = { carId, email ->
+                                    carViewModel.shareCar(carId, email)
+                                },
                                 onLogout = {
-                                    FirebaseAuth.getInstance().signOut() // Termina a sessão
+                                    FirebaseAuth.getInstance().signOut()
                                     navController.navigate("login") {
                                         popUpTo("car_list") { inclusive = true }
                                     }
@@ -100,3 +121,4 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
